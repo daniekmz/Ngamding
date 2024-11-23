@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab Navigation with Animation</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .border-text {
+            border: 2px solid #007BFF; /* Mengatur border dengan warna biru */
+            padding: 50px; /* Ruang di dalam border */
+            display: inline-block; /* Agar border mengikuti ukuran teks */
+            border-radius: 5px; /* Membuat sudut border melengkung (opsional) */
+            background-color: #E9F7FF; /* Warna latar belakang (opsional) */
+            font-size: 16px; /* Ukuran font */
+            color: #333; /* Warna teks */
+        }
+    </style>
+</style>
+</head>
+<body>
+
+    <nav>
+        <button class="tab-link active" onclick="openTab(event, 'profile')">Profile</button>
+        <button class="tab-link" onclick="openTab(event, 'roadmap')">Roadmap</button>
+        <button class="tab-link" onclick="openTab(event, 'skills')">Skills</button>
+        <button class="tab-link" onclick="openTab(event, 'contact')">Contact</button>
+        <button class="tab-link" onclick="openTab(event,'materi')">Materi</button>
+    </nav>
+    
+    <section id="profile" class="tab-content active">
+        <h2>Profile</h2>
+        <p><strong>Nama:</strong> MUHAMAD RAMDANI</p>
+        <p><strong>Usia:</strong> 21</p>
+        <p><strong>Pekerjaan:</strong> Mahasiswa</p>
+        <p><strong>Hobi:</strong> Coding, Traveling</p>
+    </section>
+
+    <section id="roadmap" class="tab-content">
+        <h2>Roadmap Kuliah</h2>
+        <ul>
+            <li>Tahun 1: Pengenalan Dasar Pemrograman</li>
+            <li>Tahun 2: Pengembangan Web dan Database</li>
+            <li>Tahun 3: Proyek Akhir dan Magang</li>
+            <li>Tahun 4: Spesialisasi dan Persiapan Kerja</li>
+        </ul>
+    </section>
+    
+    <section id="skills" class="tab-content">
+        <h2>Skills</h2>
+        <ul>
+            <li>HTML, CSS, JavaScript, Java</li>
+            <li>-</li>
+            <li>-</li>
+        </ul>
+    </section>
+    
+    <section id="contact" class="tab-content">
+        <h2>Contact</h2>
+        <p>Silakan hubungi saya di email: example@example.com</p>
+    </section>
+
+    <section id="materi" class="tab-content"
+        <h2>Materi</h2>
+        <ul></ul>
+        <li>coding java</li>
+            <div class="border-text">public class AritmatikaDemo 
+                <p>public static void main(String[] args) {
+                    float x = 27.475; // Use 'f' to indicate that this is a float literal
+                    double y = 7.22;
+                
+                    System.out.println(" x - y = " + (x - y));
+                    System.out.print(" " );
+                    
+                }  </p>{
+                 
+            
+            }</div>
+        </ul>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>
