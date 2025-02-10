@@ -1,83 +1,130 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tab Navigation with Animation</title>
+    <title>Portofolio Saya</title>
     <link rel="stylesheet" href="styles.css">
-    <style>
-        .border-text {
-            border: 2px solid #007BFF; /* Mengatur border dengan warna biru */
-            padding: 50px; /* Ruang di dalam border */
-            display: inline-block; /* Agar border mengikuti ukuran teks */
-            border-radius: 5px; /* Membuat sudut border melengkung (opsional) */
-            background-color: #E9F7FF; /* Warna latar belakang (opsional) */
-            font-size: 16px; /* Ukuran font */
-            color: #333; /* Warna teks */
-        }
-    </style>
-</style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
-<body>
+<body class="dark-mode">
+    <!-- Background Bubbles -->
+    <div class="bubbles">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+    </div>
 
-    <nav>
-        <button class="tab-link active" onclick="openTab(event, 'profile')">Profile</button>
-        <button class="tab-link" onclick="openTab(event, 'roadmap')">Roadmap</button>
-        <button class="tab-link" onclick="openTab(event, 'skills')">Skills</button>
-        <button class="tab-link" onclick="openTab(event, 'contact')">Contact</button>
-        <button class="tab-link" onclick="openTab(event,'materi')">Materi</button>
-    </nav>
-    
-    <section id="profile" class="tab-content active">
-        <h2>Profile</h2>
-        <p><strong>Nama:</strong> MUHAMAD RAMDANI</p>
-        <p><strong>Usia:</strong> 21</p>
-        <p><strong>Pekerjaan:</strong> Mahasiswa</p>
-        <p><strong>Hobi:</strong> Coding, Traveling</p>
-    </section>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h2>Menu</h2>
+        </div>
+        <nav class="sidebar-nav">
+            <ul>
+                <li><a href="#home" class="active"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="#about"><i class="fas fa-user"></i> About Me</a></li>
+                <li><a href="#portfolio"><i class="fas fa-briefcase"></i> Portfolio</a></li>
+                <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li>
+                    <button id="theme-toggle" class="theme-toggle">
+                        <i class="fas fa-moon"></i> Dark Mode
+                    </button>
+                </li>
+            </ul>
+        </nav>
+        <div class="social-links">
+            <a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin"></i></a>
+            <a href="https://instagram.com/danie_orlando_arsenio" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://github.com/daniekmz" target="_blank"><i class="fab fa-github"></i></a>
+        </div>
+    </aside>
 
-    <section id="roadmap" class="tab-content">
-        <h2>Roadmap Kuliah</h2>
-        <ul>
-            <li>Tahun 1: Pengenalan Dasar Pemrograman</li>
-            <li>Tahun 2: Pengembangan Web dan Database</li>
-            <li>Tahun 3: Proyek Akhir dan Magang</li>
-            <li>Tahun 4: Spesialisasi dan Persiapan Kerja</li>
-        </ul>
-    </section>
-    
-    <section id="skills" class="tab-content">
-        <h2>Skills</h2>
-        <ul>
-            <li>HTML, CSS, JavaScript, Java</li>
-            <li>-</li>
-            <li>-</li>
-        </ul>
-    </section>
-    
-    <section id="contact" class="tab-content">
-        <h2>Contact</h2>
-        <p>Silakan hubungi saya di email: waitlistdanie@gmail.com</p>
-    </section>
+    <!-- Menu Toggle -->
+    <div class="menu-toggle">
+        <i class="fas fa-bars"></i>
+    </div>
 
-    <section id="materi" class="tab-content"
-        <h2>Materi</h2>
-        <ul></ul>
-        <li>coding java</li>
-            <div class="border-text">public class AritmatikaDemo 
-                <p>public static void main(String[] args) {
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <h1>Halo, Saya danie</h1>
+            <p>wellcome </p>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="section">
+            <div class="profile-container animate-on-scroll">
+                <img src="1.jpg" alt="Profile" class="profile-img">
+                <div>
+                    <h1>Tentang Saya</h1>
+                    <p class="animate-on-scroll">
+                        Halo, saya Dani! Saya seorang penggemar teknologi yang sangat tertarik dengan dunia Web3 dan blockchain.
                     </p>
-                <p> float x = 27.475;
-                    double y = 7.22;
-                
-                 </p> 
-                <p>System.out.println(" x - y = " + (x - y));
-                    System.out.print(" " );
-                    
-                }</p>
+                    <p> Saya suka menjelajahi berbagai airdrop yang ada di ekosistem blockchain, </p>
+                    <p>karena saya percaya bahwa teknologi ini memiliki potensi besar untuk mengubah cara kita berinteraksi dan bertransaksi.</p>
+                    <p>Selain itu, saya juga memiliki minat yang mendalam dalam pemrograman</p>
+                    <p>saya senang mengembangkan aplikasi dan solusi yang memanfaatkan teknologi terbaru. </p>
+                    <p> Koding adalah salah satu cara saya untuk mengekspresikan kreativitas dan menyelesaikan masalah.</p>
+                    <p>Saya selalu berusaha untuk belajar lebih banyak tentang inovasi terbaru di bidang teknologi dan blockchain,</p>
+                    <p>serta berbagi pengetahuan dengan orang lain. Mari kita terhubung dan berdiskusi tentang proyek-proyek menarik di dunia Web3!</p>
+                    <div class="skills">
+                        <span class="skill-item">HTML5</span>
+                        <span class="skill-item">CSS</span>
+                        <span class="skill-item">JavaScript</span>
+                    </div>
+                </div>
             </div>
-        </ul>
-    </section>
+
+            <div class="animate-on-scroll">
+                <h2>Ngamding</h2>
+                <h2>Apa itu ngamding?</h2>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <p> </p>
+                        <p>Ngamding (Ngampus Ngoding) adalah projek saya dari awal kuliah hingga semester akhir dimana saya berniat untuk </p>
+                        <p>membuat web ini dari awal saya masuk kuliah hingga selesai dengan isi web biodata saya dan apa yang saya dapat </p>
+                        <P>selama kuliah.</P>
+                    </div>
+                    <div class="timeline-item">
+                        <h3> 
+
+                        </h3>
+                        <h3>Road map</h3>
+                        <p>2024 - 2029</p>
+                        <p>-</p>
+                        <p>-</p>
+                        <p>-</p>
+                        <p>-</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio Section -->
+        <section id="portfolio" class="section">
+            <h2>Portfolio</h2>
+            <div class="portfolio-items">
+                <div class="item">Proyek 1</div>
+                <div class="item">Proyek 2</div>
+                <div class="item">Proyek 3</div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="section">
+            <h2>Kontak</h2>
+            <form>
+                <input type="text" placeholder="Nama Anda" required>
+                <input type="email" placeholder="Email Anda" required>
+                <textarea placeholder="Pesan Anda" required></textarea>
+                <button type="submit">Kirim</button>
+            </form>
+        </section>
+    </main>
 
     <script src="script.js"></script>
 </body>

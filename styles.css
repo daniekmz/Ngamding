@@ -1,126 +1,245 @@
-body {
-    font-family: Arial, sans-serif;
+/* General Styles */
+* {
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
 }
 
-.container {
-    width: 80%;
-    margin: auto;
-    overflow: hidden;
-}
-
-header {
-    background: #35424a;
-    color: #ffffff;
-    padding: 20px 0;
-    text-align: center;
-}
-
-.tabs {
-    display: flex;
-    justify-content: center;
-    margin: 20px 0;
-}
-
-.tab-link {
-    background: #e7e7e7;
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.tab-link.active {
-    background: #35424a;
-    color: white;
-}
-
-.tab-link:hover {
-    background: #ddd;
-}
-
-.tab-content {
-    display: none;
-    padding: 20px;
-    background: white;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    animation: fadeIn 1s;
-}
-
-.tab-content.active {
-    display: block;
-}
-
-footer {
-    text-align: center;
-    padding: 10px 0;
-    background: #35424a;
-    color: white;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-}
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
-    margin: 0;
-    padding: 20px;
-}
-
-.menu {
+    background: var(--background-color);
+    color: var(--text-color);
+    overflow-x: hidden;
     position: relative;
-    display: inline-block;
+    transition: background 0.3s, color 0.3s;
 }
 
-.menu-button {
-    background-color: #007BFF;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
+/* Dark Mode Variables */
+body.dark-mode {
+    --background-color: #1e1e2f;
+    --text-color: #ffffff;
+    --sidebar-bg: rgba(255, 255, 255, 0.1);
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --hover-bg: rgba(255, 255, 255, 0.2);
+    --accent-color: #ff6b6b;
 }
 
-.menu-button:hover {
-    background-color: #0056b3;
+/* Light Mode Variables */
+body.light-mode {
+    --background-color: #ccccd1;
+    --text-color: #333333;
+    --sidebar-bg: rgba(0, 0, 0, 0.1);
+    --card-bg: rgba(0, 0, 0, 0.05);
+    --hover-bg: rgba(0, 0, 0, 0.1);
+    --accent-color: #1e3c72;
 }
 
-.menu-content {
-    display: none; /* Sembunyikan menu secara default */
+/* Background Bubbles */
+.bubbles {
     position: absolute;
-    background-color: white;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    margin-top: 5px;
-    animation: fadeIn 0.3s; /* Animasi saat muncul */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
 }
 
-.menu-content a {
+.bubble {
+    position: absolute;
+    bottom: -100px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    animation: float 10s infinite ease-in;
+}
+
+@keyframes float {
+    0% {
+        bottom: -100px;
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(100px);
+    }
+    100% {
+        bottom: 100%;
+        transform: translateX(-100px);
+    }
+}
+
+/* Right Sidebar */
+.sidebar {
+    width: 300px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    right: -300px;
+    background: var(--sidebar-bg);
+    backdrop-filter: blur(15px);
+    padding: 20px;
+    transition: 0.5s;
+    z-index: 1000;
+}
+
+.sidebar.active {
+    right: 0;
+}
+
+.sidebar-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.sidebar-nav ul {
+    list-style: none;
+}
+
+.sidebar-nav li {
+    margin: 25px 0;
+    opacity: 0;
+    transform: translateX(50px);
+}
+
+.sidebar-nav a, .theme-toggle {
+    color: var(--text-color);
+    text-decoration: none;
+    font-size: 1.1rem;
     display: block;
     padding: 10px 15px;
-    color: #333;
-    text-decoration: none;
-    transition: background-color 0.3s;
+    border-radius: 5px;
+    transition: 0.3s;
+    position: relative;
+    background: none;
+    border: none;
+    text-align: left;
+    width: 100%;
+    cursor: pointer;
 }
 
-.menu-content a:hover {
-    background-color: #f0f0f0;
+.sidebar-nav a.active, .theme-toggle.active {
+    background: var(--hover-bg);
 }
 
-@keyframes fadeIn {
+.sidebar-nav a::before, .theme-toggle::before {
+    content: '';
+    position: absolute;
+    width: 3px;
+    height: 0;
+    background: var(--accent-color);
+    left: -10px;
+    top: 50%;
+    transition: 0.3s;
+}
+
+.sidebar-nav a:hover, .theme-toggle:hover {
+    background: var(--hover-bg);
+    transform: translateX(10px);
+}
+
+.sidebar-nav a:hover::before, .theme-toggle:hover::before {
+    height: 100%;
+    top: 0;
+}
+
+/* Menu Toggle Button */
+.menu-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: var(--sidebar-bg);
+    border-radius: 50%;
+    cursor: pointer;
+    z-index: 1001;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: 0.3s;
+}
+
+.menu-toggle:hover {
+    background: var(--hover-bg);
+}
+
+/* Main Content */
+.main-content {
+    padding: 50px;
+    min-height: 100vh;
+}
+
+.section {
+    display: none;
+}
+
+.section.active {
+    display: block;
+}
+
+/* About Section */
+.about-section {
+    max-width: 800px;
+    margin: 0 auto;
+    animation: slideInLeft 1s ease-out;
+}
+
+.profile-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 30px;
+    align-items: center;
+    margin-bottom: 50px;
+}
+
+.profile-img {
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid var(--accent-color);
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.3);
+}
+
+.skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.skill-item {
+    background: var(--card-bg);
+    padding: 8px 15px;
+    border-radius: 20px;
+    transition: 0.3s;
+}
+
+.skill-item:hover {
+    transform: translateY(-3px);
+    background: var(--accent-color);
+}
+
+/* Animations */
+@keyframes slideInLeft {
     from {
+        transform: translateX(-100px);
         opacity: 0;
-        transform: translateY(-10px);
     }
     to {
+        transform: translateX(0);
         opacity: 1;
-        transform: translateY(0);
     }
+}
+
+.animate-on-scroll {
+    opacity: 0;
+    transform: translateY(30px);
+    transition: 1s;
+}
+
+.animate-on-scroll.active {
+    opacity: 1;
+    transform: translateY(0);
 }

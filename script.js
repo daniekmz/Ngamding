@@ -1,40 +1,55 @@
-function openTab(event, tabName) {
-    // Mengambil semua elemen dengan class "tab-content"
-    const tabContents = document.querySelectorAll('.tab-content');
-    // Mengambil semua elemen dengan class "tab-link"
-    const tabLinks = document.querySelectorAll('.tab-link');
+// Toggle Sidebar
+document.querySelector('.menu-toggle').addEventListener('click', () => {
+    document.querySelector('.sidebar').classList.toggle('active');
 
-    // Menyembunyikan semua tab content
-    tabContents.forEach(tab => {
-        tab.classList.remove('active');
+    // Animate menu items
+    const navItems = document.querySelectorAll('.sidebar-nav li');
+    navItems.forEach((item, index) => {
+        setTimeout(() => {
+            item.style.opacity = '1';
+            item.style.transform = 'translateX(0)';
+        }, index * 100);
     });
+});
 
-    // Menghapus class "active" dari semua tab links
-    tabLinks.forEach(link => {
-        link.classList.remove('active');
+// Highlight Active Menu and Show Section
+const sections = document.querySelectorAll('.section');
+const navLinks = document.querySelectorAll('.sidebar-nav a');
+
+navLinks.forEach(link => {
+    link.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        // Remove active class from all links and sections
+        navLinks.forEach(link => link.classList.remove('active'));
+        sections.forEach(section => section.classList.remove('active'));
+
+        // Add active class to clicked link and corresponding section
+        link.classList.add('active');
+        const targetSection = document.querySelector(link.getAttribute('href'));
+        targetSection.classList.add('active');
     });
+});
 
-    // Menampilkan tab content yang sesuai
-    document.getElementById(tabName).classList.add('active');
+// Toggle Dark/Light Mode
+const themeToggle = document.getElementById('theme-toggle');
+themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('dark-mode');
+    document.body.classList.toggle('light-mode');
+    themeToggle.innerHTML = document.body.classList.contains('dark-mode') 
+        ? '<i class="fas fa-sun"></i> Light Mode' 
+        : '<i class="fas fa-moon"></i> Dark Mode';
+});
 
-    // Menambahkan class "active" pada tab link yang diklik
-    event.currentTarget.classList.add('active');
-    function toggleMenu() {
-        const menuContent = document.getElementById('menuContent');
-        if (menuContent.style.display === 'block') {
-            menuContent.style.display = 'none';
-        } else {
-            menuContent.style.display = 'block';
+// Scroll Animation
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('active');
         }
-    }
+    });
+}, { threshold: 0.1 });
 
-    // Menutup menu jika klik di luar
-    window.onclick = function(event) {
-        if (!event.target.matches('.menu-button')) {
-            const menuContent = document.getElementById('menuContent');
-            if (menuContent.style.display === 'block') {
-                menuContent.style.display = 'none';
-            }
-        }
-    }
-}
+document.querySelectorAll('.animate-on-scroll').forEach((el) => {
+    observer.observe(el);
+});
