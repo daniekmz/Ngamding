@@ -39,6 +39,7 @@
             <a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin"></i></a>
             <a href="https://instagram.com/danie_orlando_arsenio" target="_blank"><i class="fab fa-instagram"></i></a>
             <a href="https://github.com/daniekmz" target="_blank"><i class="fab fa-github"></i></a>
+            <a href="https://mywish.vercel.app/" target="_blank"><i class="fas fa-cake"></i></a>
         </div>
     </aside>
 
@@ -52,7 +53,7 @@
         <!-- Home Section -->
         <section id="home" class="section active">
             <h1>Halo, Saya danie</h1>
-            <p>wellcome </p>
+            <p>Welcome to my portfolio!</p>
         </section>
 
         <!-- About Section -->
@@ -64,41 +65,11 @@
                     <p class="animate-on-scroll">
                         Halo, saya Dani! Saya seorang penggemar teknologi yang sangat tertarik dengan dunia Web3 dan blockchain.
                     </p>
-                    <p> Saya suka menjelajahi berbagai airdrop yang ada di ekosistem blockchain, </p>
-                    <p>karena saya percaya bahwa teknologi ini memiliki potensi besar untuk mengubah cara kita berinteraksi dan bertransaksi.</p>
-                    <p>Selain itu, saya juga memiliki minat yang mendalam dalam pemrograman</p>
-                    <p>saya senang mengembangkan aplikasi dan solusi yang memanfaatkan teknologi terbaru. </p>
-                    <p> Koding adalah salah satu cara saya untuk mengekspresikan kreativitas dan menyelesaikan masalah.</p>
-                    <p>Saya selalu berusaha untuk belajar lebih banyak tentang inovasi terbaru di bidang teknologi dan blockchain,</p>
-                    <p>serta berbagi pengetahuan dengan orang lain. Mari kita terhubung dan berdiskusi tentang proyek-proyek menarik di dunia Web3!</p>
+                    <p>Saya suka menjelajahi berbagai airdrop yang ada di ekosistem blockchain.</p>
                     <div class="skills">
                         <span class="skill-item">HTML5</span>
                         <span class="skill-item">CSS</span>
                         <span class="skill-item">JavaScript</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="animate-on-scroll">
-                <h2>Ngamding</h2>
-                <h2>Apa itu ngamding?</h2>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <p> </p>
-                        <p>Ngamding (Ngampus Ngoding) adalah projek saya dari awal kuliah hingga semester akhir dimana saya berniat untuk </p>
-                        <p>membuat web ini dari awal saya masuk kuliah hingga selesai dengan isi web biodata saya dan apa yang saya dapat </p>
-                        <P>selama kuliah.</P>
-                    </div>
-                    <div class="timeline-item">
-                        <h3> 
-
-                        </h3>
-                        <h3>Road map</h3>
-                        <p>2024 - 2029</p>
-                        <p>-</p>
-                        <p>-</p>
-                        <p>-</p>
-                        <p>-</p>
                     </div>
                 </div>
             </div>
@@ -117,15 +88,37 @@
         <!-- Contact Section -->
         <section id="contact" class="section">
             <h2>Kontak</h2>
-            <form>
+            <form id="contact-form">
                 <input type="text" placeholder="Nama Anda" required>
                 <input type="email" placeholder="Email Anda" required>
                 <textarea placeholder="Pesan Anda" required></textarea>
                 <button type="submit">Kirim</button>
             </form>
         </section>
+
+        <!-- Chat Section -->
+        <section id="chat-section" class="section">
+            <h2>Chat Room</h2>
+            <div id="chat-container">
+                <div id="chat-messages"></div>
+                <form id="chat-form">
+                    <input type="text" id="chat-name" placeholder="Nama Anda" required>
+                    <textarea id="chat-message" placeholder="Tulis pesan Anda..." required></textarea>
+                    <button type="submit">Kirim</button>
+                </form>
+            </div>
+        </section>
     </main>
 
-    <script src="script.js"></script>
+    <!-- Button to Open Chat Section -->
+    <button id="open-chat" class="floating-button">
+        <i class="fas fa-comments"></i>
+    </button>
+
+    <!-- Firebase Script -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <script src="config.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
