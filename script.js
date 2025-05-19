@@ -102,7 +102,7 @@ function setupScrollAnimation() {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.style.animation = `fadeIn 0.5s ${entry.target.dataset.delay || '0s'} ease-out forwards`;
+                entry.target.classList.add('active');
             }
         });
     }, { threshold: 0.1 });

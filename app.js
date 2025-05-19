@@ -55,56 +55,44 @@ function displayMessage(message) {
 // Initialize File Upload
 function initFileUpload() {
     const fileInput = document.getElementById('file-upload');
-    const dropZone = document.getElementById('drop-zone');
+    const uploadButton = document.getElementById('upload-button');
     const fileList = document.getElementById('file-list');
     const progressBar = document.querySelector('.progress-bar');
-    const progressText = document.querySelector('.progress-text');
 
-    // Drag & drop handlers
-    dropZone.addEventListener('dragover', (e) => {
+    if (!fileInput || !uploadButton || !fileList || !progressBar) return;
+
+    uploadButton.addEventListener('click', (e) => {
         e.preventDefault();
-        dropZone.style.borderColor = var(--primary-btn);
+        fileInput.click();
     });
 
-    dropZone.addEventListener('dragleave', () => {
-        dropZone.style.borderColor = var(--accent-color);
-    });
-
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
-            fileInput.files = files;
-            handleFileUpload(files[0]);
-        }
-    });
-
-    // Click handler
-    dropZone.addEventListener('click', () => fileInput.click());
-
-    // File input change handler
-    fileInput.addEventListener('change', (e) => {
+    fileInput.addEventListener('change', async (e) => {
         const file = e.target.files[0];
-        if (file) handleFileUpload(file);
-    });
+        if (!file) return;
 
-    async function handleFileUpload(file) {
         try {
-            const storageRef = storage.ref(`uploads/${Date.now()}_${file.name}`);
+            // Create storage reference
+            const storageRef = storage.ref(`uploads/${file.name}`);
+            
+            // Upload file
             const uploadTask = storageRef.put(file);
-
+            
+            // Track upload progress
             uploadTask.on('state_changed',
                 (snapshot) => {
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                     progressBar.style.width = `${progress}%`;
-                    progressText.textContent = `${Math.round(progress)}%`;
                 },
                 (error) => {
                     console.error("Upload error:", error);
-                    alert("Upload failed: " + error.message);
+                    progressBar.style.width = '0%';
+                    alert("Upload failed. Please try again.");
                 },
                 async () => {
+                    // Upload complete
                     const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                    
+                    // Save file metadata to Firestore
                     await db.collection("files").add({
                         name: file.name,
                         size: file.size,
@@ -112,17 +100,21 @@ function initFileUpload() {
                         url: downloadURL,
                         timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     });
+                    
+                    // Reset input and progress
                     fileInput.value = '';
                     progressBar.style.width = '0%';
-                    progressText.textContent = '0%';
+                    
+                    // Refresh file list
                     loadFiles();
                 }
             );
         } catch (error) {
             console.error("Upload failed:", error);
-            alert("Upload failed: " + error.message);
+            progressBar.style.width = '0%';
+            alert("Upload failed. Please try again.");
         }
-    }
+    });
 
     // Load files from Firestore
     async function loadFiles() {
@@ -147,21 +139,24 @@ function initFileUpload() {
         fileItem.className = 'file-item';
         fileItem.innerHTML = `
             <span>${file.name}</span>
-            <span class="file-date">${file.timestamp?.toDate().toLocaleDateString()}</span>
             <span>${formatFileSize(file.size)}</span>
-            <div class="file-actions">
-                <a href="${file.url}" download="${file.name}" class="download-btn">
-                    <i class="fas fa-download"></i>
-                </a>
-                <span class="file-time">${file.timestamp?.toDate().toLocaleTimeString()}</span>
-            </div>
+            <a href="${file.url}" download="${file.name}" class="download-btn">
+                <i class="fas fa-download"></i> Download
+            </a>
         `;
         fileList.appendChild(fileItem);
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes < 1024) return `${bytes} B`;
+        if (bytes < 1048576) return `${(bytes / 1024).toFixed(2)} KB`;
+        return `${(bytes / 1048576).toFixed(2)} MB`;
     }
 
     // Initial load
     loadFiles();
 }
+
 // Initialize Contact Form
 function initContactForm() {
     const contactForm = document.getElementById('contact-form');
