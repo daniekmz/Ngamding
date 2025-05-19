@@ -1,8 +1,4 @@
 // Firebase configuration
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/firestore';
-import 'firebase/compat/storage';
-
 const firebaseConfig = {
   apiKey: "AIzaSyCLEaHPBo832WpXuLg-JytYqCYpxTELmzY",
   authDomain: "datakomen.firebaseapp.com",
@@ -13,11 +9,8 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
+firebase.initializeApp(firebaseConfig);
 
 // Initialize services
 const db = firebase.firestore();
-const storage = firebase.storage();
-
-// Export services
-export { db, storage };
+const storage
