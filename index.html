@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio - Danie</title>
+    <title>Ngamding - Danie</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 </head>
 <body class="dark-mode">
     <!-- Sidebar -->
@@ -21,7 +22,6 @@
                 <li><a href="#about"><i class="fas fa-user"></i> About Me</a></li>
                 <li><a href="#portfolio"><i class="fas fa-briefcase"></i> Portfolio</a></li>
                 <li><a href="#files"><i class="fas fa-file-upload"></i> File Upload</a></li>
-                <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
                 <li>
                     <button id="theme-toggle" class="theme-toggle">
                         <i class="fas fa-moon"></i> Dark Mode
@@ -51,8 +51,9 @@
                 <h1>Halo, Saya <span class="highlight">Danie</span></h1>
                 <p class="subtitle">Web Developer & Blockchain Enthusiast</p>
                 <div class="cta-buttons">
-                    <a href="#portfolio" class="btn primary">View My Work</a>
-                    <a href="#contact" class="btn secondary">Contact Me</a>
+                    <a href="#about" class="btn primary">View About Me</a>
+                    <a href="#files" class="btn primary">Database</a>
+                    <a href="#portofolio" class="btn primary">Portofolio</a>
                 </div>
             </div>
         </section>
@@ -60,7 +61,7 @@
         <!-- About Section -->
         <section id="about" class="section">
             <div class="profile-container animate-on-scroll">
-                <img src="1.jpg" alt="Profile" class="profile-img">
+                <img src="gambar/1.png" alt="Profile" class="profile-img">
                 <div>
                     <h1>Tentang Saya</h1>
                     <p class="animate-on-scroll">
@@ -113,12 +114,12 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>s
         </section>
 
         <!-- File Upload Section -->
         <section id="files" class="section">
-            <h2>File Upload</h2>
+            <h2>File Database - SupaBase</h2>
             <div class="file-upload-container animate-on-scroll">
                 <div class="upload-box" id="drop-zone">
                     <i class="fas fa-cloud-upload-alt upload-icon"></i>
@@ -134,44 +135,7 @@
                 </div>
             </div>
         </section>
-
-        <!-- Contact Section -->
-        <section id="contact" class="section">
-            <h2>Kontak</h2>
-            <div class="contact-container animate-on-scroll">
-                <form id="contact-form">
-                    <input type="text" id="contact-name" placeholder="Nama Anda" required>
-                    <input type="email" id="contact-email" placeholder="Email Anda" required>
-                    <textarea id="contact-message" placeholder="Pesan Anda" required></textarea>
-                    <button type="submit" class="btn primary">Kirim</button>
-                </form>
-                <div class="contact-info">
-                    <h3>Contact Information</h3>
-                    <p><i class="fas fa-envelope"></i> email@example.com</p>
-                    <p><i class="fas fa-phone"></i> +123 456 7890</p>
-                    <p><i class="fas fa-map-marker-alt"></i> Jakarta, Indonesia</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Chat Section -->
-        <section id="chat-section" class="section">
-            <div class="chat-container animate-on-scroll">
-                <h2>Chat Room</h2>
-                <div id="chat-messages"></div>
-                <form id="chat-form">
-                    <input type="text" id="chat-name" placeholder="Nama Anda" required>
-                    <textarea id="chat-message" placeholder="Tulis pesan Anda..." required></textarea>
-                    <button type="submit" class="btn primary">Kirim</button>
-                </form>
-            </div>
-        </section>
     </main>
-
-    <!-- Button to Open Chat Section -->
-    <button id="open-chat" class="floating-button" data-tooltip="Open Chat">
-        <i class="fas fa-comments"></i>
-    </button>
 
     <!-- App Scripts -->
     <script src="config.js"></script>

@@ -1,23 +1,8 @@
-// Supabase configuration
-const supabaseUrl = 'https://vdpicmptzgbluxqkudcr.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZkcGljbXB0emdibHV4cWt1ZGNyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDAzNzAzMzIsImV4cCI6MjA1NTk0NjMzMn0.tUEDM8SVWzKkBg-zL5Gaju1slBQ3wi7MK7zFk4e_I28';
+// Inisialisasi Supabase dan simpan ke window object
+const supabaseUrl = 'https://kwbrwwzxbepptjyjriyj.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imt3YnJ3d3p4YmVwcHRqeWpyaXlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDc2Mzg5ODEsImV4cCI6MjA2MzIxNDk4MX0.VlzF9BiQsTeiJZCIAHEuZjN1-tXGHqPz08QuhnX7kcg';
 
-// Initialize Supabase
-const supabase = supabase.createClient(supabaseUrl, supabaseKey, {
-  db: {
-    schema: 'public'
-  },
-  auth: {
-    persistSession: true
-  },
-  realtime: {
-    params: {
-      eventsPerSecond: 10
-    }
-  }
+window.supabase = supabase.createClient(supabaseUrl, supabaseKey, {
+  db: { schema: 'public' },
+  auth: { persistSession: true }
 });
-
-// Export for testing purposes
-if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { supabase };
-}

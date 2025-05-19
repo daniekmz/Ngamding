@@ -3,7 +3,7 @@ const menuToggle = document.querySelector('.menu-toggle');
 const sidebar = document.querySelector('.sidebar');
 const navLinks = document.querySelectorAll('.sidebar-nav a');
 const themeToggle = document.getElementById('theme-toggle');
-const openChatBtn = document.getElementById('open-chat');
+const sections = document.querySelectorAll('.section');
 
 // Initialize the app
 function init() {
@@ -12,6 +12,16 @@ function init() {
     setupNavigation();
     setInitialTheme();
     setupMaterialRipple();
+    
+    // Show initial section based on hash or default to home
+    const hash = window.location.hash || '#home';
+    const initialLink = document.querySelector(`.sidebar-nav a[href="${hash}"]`);
+    if (initialLink) {
+        navigateToSection(initialLink);
+    } else {
+        const homeLink = document.querySelector('.sidebar-nav a[href="#home"]');
+        if (homeLink) navigateToSection(homeLink);
+    }
 }
 
 // Set up event listeners
@@ -26,10 +36,14 @@ function setupEventListeners() {
         themeToggle.addEventListener('click', toggleTheme);
     }
     
-    // Open chat
-    if (openChatBtn) {
-        openChatBtn.addEventListener('click', toggleChatSection);
-    }
+    // Handle hash changes
+    window.addEventListener('hashchange', function() {
+        const hash = window.location.hash;
+        const link = document.querySelector(`.sidebar-nav a[href="${hash}"]`);
+        if (link) {
+            navigateToSection(link);
+        }
+    });
 }
 
 // Set initial theme based on preference
@@ -38,11 +52,15 @@ function setInitialTheme() {
     if (prefersDark) {
         document.body.classList.add('dark-mode');
         document.body.classList.remove('light-mode');
-        themeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+        if (themeToggle) {
+            themeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+        }
     } else {
         document.body.classList.add('light-mode');
         document.body.classList.remove('dark-mode');
-        themeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+        if (themeToggle) {
+            themeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+        }
     }
 }
 
@@ -50,9 +68,18 @@ function setInitialTheme() {
 function setupNavigation() {
     if (navLinks) {
         navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
+            link.addEventListener('click', function(e) {
                 e.preventDefault();
-                navigateToSection(link);
+                navigateToSection(this);
+                
+                // Update URL hash without causing a page jump
+                const hash = this.getAttribute('href');
+                history.pushState(null, '', hash);
+                
+                // Close sidebar on mobile
+                if (window.innerWidth < 768) {
+                    sidebar.classList.remove('active');
+                }
             });
         });
     }
@@ -66,6 +93,10 @@ function toggleSidebar() {
 function animateNavItems() {
     const navItems = document.querySelectorAll('.sidebar-nav li');
     navItems.forEach((item, index) => {
+        // Reset first to ensure animation works consistently
+        item.style.opacity = '0';
+        item.style.transform = 'translateX(50px)';
+        
         setTimeout(() => {
             item.style.opacity = '1';
             item.style.transform = 'translateX(0)';
@@ -74,22 +105,23 @@ function animateNavItems() {
 }
 
 function navigateToSection(link) {
-    // Remove active class from all links and sections
-    navLinks.forEach(link => link.classList.remove('active'));
-    document.querySelectorAll('.section').forEach(section => {
-        section.classList.remove('active');
-    });
+    // Get the target section ID
+    const targetId = link.getAttribute('href');
     
-    // Add active class to clicked link and corresponding section
+    // Remove active class from all links and sections
+    navLinks.forEach(navLink => navLink.classList.remove('active'));
+    sections.forEach(section => section.classList.remove('active'));
+    
+    // Add active class to clicked link
     link.classList.add('active');
-    const targetSection = document.querySelector(link.getAttribute('href'));
+    
+    // Add active class to target section
+    const targetSection = document.querySelector(targetId);
     if (targetSection) {
         targetSection.classList.add('active');
-    }
-    
-    // Close sidebar on mobile
-    if (window.innerWidth < 768) {
-        sidebar.classList.remove('active');
+        
+        // Scroll to section smoothly
+        targetSection.scrollIntoView({ behavior: 'smooth' });
     }
 }
 
@@ -101,17 +133,6 @@ function toggleTheme() {
     themeToggle.innerHTML = isDarkMode 
         ? '<i class="fas fa-sun"></i> Light Mode' 
         : '<i class="fas fa-moon"></i> Dark Mode';
-}
-
-function toggleChatSection() {
-    const chatSection = document.getElementById('chat-section');
-    if (chatSection) {
-        chatSection.classList.toggle('active');
-        // Scroll to chat section if it's being opened
-        if (chatSection.classList.contains('active')) {
-            chatSection.scrollIntoView({ behavior: 'smooth' });
-        }
-    }
 }
 
 function setupScrollAnimation() {

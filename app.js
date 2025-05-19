@@ -1,88 +1,3 @@
-// Initialize Chat with Supabase
-function initChat() {
-    const chatForm = document.getElementById('chat-form');
-    const chatMessages = document.getElementById('chat-messages');
-
-    if (!chatForm || !chatMessages) return;
-
-    chatForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const name = document.getElementById('chat-name').value.trim();
-        const message = document.getElementById('chat-message').value.trim();
-        
-        if (name && message) {
-            try {
-                const { error } = await supabase
-                    .from('messages')
-                    .insert([
-                        { 
-                            name: name, 
-                            message: message,
-                            created_at: new Date()
-                        }
-                    ]);
-                
-                if (error) throw error;
-                
-                document.getElementById('chat-message').value = '';
-                document.getElementById('chat-message').focus();
-            } catch (error) {
-                console.error("Error sending message:", error);
-                alert("Failed to send message. Please try again.");
-            }
-        }
-    });
-
-    // Load messages with real-time updates
-    const subscription = supabase
-        .from('messages')
-        .on('*', payload => {
-            loadMessages();
-        })
-        .subscribe();
-
-    // Initial load
-    loadMessages();
-}
-
-async function loadMessages() {
-    const chatMessages = document.getElementById('chat-messages');
-    if (!chatMessages) return;
-    
-    try {
-        const { data: messages, error } = await supabase
-            .from('messages')
-            .select('*')
-            .order('created_at', { ascending: true });
-        
-        if (error) throw error;
-        
-        chatMessages.innerHTML = '';
-        messages.forEach(message => {
-            displayMessage(message);
-        });
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    } catch (error) {
-        console.error("Error loading messages:", error);
-    }
-}
-
-function displayMessage(message) {
-    const chatMessages = document.getElementById('chat-messages');
-    if (!chatMessages) return;
-    
-    const messageElement = document.createElement('div');
-    messageElement.className = 'message';
-    messageElement.innerHTML = `
-        <div class="message-header">
-            <strong>${message.name}</strong>
-            <small>${new Date(message.created_at).toLocaleString()}</small>
-        </div>
-        <p>${message.message}</p>
-    `;
-    chatMessages.appendChild(messageElement);
-}
-
 // Enhanced File Upload Functionality with Supabase
 function initFileUpload() {
     const fileInput = document.getElementById('file-upload');
@@ -101,23 +16,20 @@ function initFileUpload() {
 
     // Handle click on drop zone or browse link
     dropZone.addEventListener('click', (e) => {
-        // Prevent triggering when clicking on browse link
         if (e.target !== browseLink) {
             fileInput.click();
         }
     });
 
-    // Handle click on browse link specifically
     browseLink.addEventListener('click', (e) => {
-        e.stopPropagation(); // Prevent triggering the dropZone click
+        e.stopPropagation();
         fileInput.click();
     });
 
-    // Handle file selection
     fileInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            handleFileUpload(file);
+        const files = e.target.files;
+        if (files.length > 0) {
+            handleFileUpload(files[0]);
         }
     });
 
@@ -163,49 +75,53 @@ function initFileUpload() {
 
     async function handleFileUpload(file) {
         try {
+            // Validate file size (e.g., 10MB limit)
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            if (file.size > maxSize) {
+                throw new Error('File size exceeds 10MB limit');
+            }
+
             uploadText.textContent = 'Uploading...';
             uploadIcon.classList.add('uploading');
-            
+            progressBar.style.width = '0%';
+            progressText.textContent = '0%';
+
             const filePath = `uploads/${Date.now()}_${file.name}`;
-            const { data, error } = await supabase.storage
+            
+            // Upload file to storage
+            const { data: uploadData, error: uploadError } = await supabase.storage
                 .from('files')
                 .upload(filePath, file, {
                     cacheControl: '3600',
-                    upsert: false,
-                    onUploadProgress: (progressEvent) => {
-                        const progress = (progressEvent.loaded / progressEvent.total) * 100;
-                        progressBar.style.width = `${progress}%`;
-                        progressText.textContent = `${Math.round(progress)}%`;
-                    }
+                    upsert: false
                 });
 
-            if (error) throw error;
+            if (uploadError) throw uploadError;
 
             // Get public URL
             const { data: { publicUrl } } = supabase.storage
                 .from('files')
                 .getPublicUrl(filePath);
 
-            // Save file metadata to Supabase
+            // Save file metadata to database
             const { data: fileData, error: dbError } = await supabase
                 .from('files')
-                .insert([
-                    { 
-                        name: file.name,
-                        size: file.size,
-                        type: file.type,
-                        url: publicUrl,
-                        path: filePath,
-                        created_at: new Date()
-                    }
-                ]);
+                .insert([{
+                    name: file.name,
+                    size: file.size,
+                    type: file.type,
+                    url: publicUrl,
+                    path: filePath,
+                    created_at: new Date().toISOString()
+                }])
+                .select();
 
             if (dbError) throw dbError;
 
-            // Reset input and progress
+            // Reset and show success
             fileInput.value = '';
-            progressBar.style.width = '0%';
-            progressText.textContent = '0%';
+            progressBar.style.width = '100%';
+            progressText.textContent = '100%';
             uploadText.textContent = 'Upload complete!';
             uploadIcon.classList.remove('uploading');
             uploadIcon.classList.add('success');
@@ -213,6 +129,8 @@ function initFileUpload() {
             setTimeout(() => {
                 uploadText.textContent = 'Drag & drop files or browse';
                 uploadIcon.classList.remove('success');
+                progressBar.style.width = '0%';
+                progressText.textContent = '0%';
             }, 2000);
             
             // Refresh file list
@@ -221,14 +139,14 @@ function initFileUpload() {
             console.error("Upload failed:", error);
             progressBar.style.width = '0%';
             progressText.textContent = '0%';
-            uploadText.textContent = 'Upload failed. Try again.';
+            uploadText.textContent = error.message || 'Upload failed. Try again.';
             uploadIcon.classList.remove('uploading');
             uploadIcon.classList.add('error');
             
             setTimeout(() => {
                 uploadText.textContent = 'Drag & drop files or browse';
                 uploadIcon.classList.remove('error');
-            }, 2000);
+            }, 3000);
         }
     }
 
@@ -244,7 +162,7 @@ function initFileUpload() {
             
             fileList.innerHTML = '<div class="file-list-header"><span>File Name</span><span>Date</span><span>Size</span><span>Action</span></div>';
             
-            if (files.length === 0) {
+            if (!files || files.length === 0) {
                 fileList.innerHTML += '<div class="no-files">No files uploaded yet</div>';
             } else {
                 files.forEach(file => {
@@ -253,6 +171,7 @@ function initFileUpload() {
             }
         } catch (error) {
             console.error("Error loading files:", error);
+            fileList.innerHTML = '<div class="no-files">Error loading files</div>';
         }
     }
 
@@ -274,7 +193,6 @@ function initFileUpload() {
         `;
         fileList.appendChild(fileItem);
         
-        // Add delete event listener
         const deleteBtn = fileItem.querySelector('.delete-btn');
         deleteBtn.addEventListener('click', async (e) => {
             e.preventDefault();
@@ -295,10 +213,7 @@ function initFileUpload() {
                     
                     if (dbError) throw dbError;
                     
-                    // Remove from UI
                     fileItem.remove();
-                    
-                    // Show success message
                     alert('File deleted successfully');
                 } catch (error) {
                     console.error("Error deleting file:", error);
@@ -318,46 +233,7 @@ function initFileUpload() {
     loadFiles();
 }
 
-// Initialize Contact Form
-function initContactForm() {
-    const contactForm = document.getElementById('contact-form');
-    
-    if (contactForm) {
-        contactForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const name = document.getElementById('contact-name').value.trim();
-            const email = document.getElementById('contact-email').value.trim();
-            const message = document.getElementById('contact-message').value.trim();
-            
-            if (name && email && message) {
-                try {
-                    const { error } = await supabase
-                        .from('contacts')
-                        .insert([
-                            { 
-                                name: name, 
-                                email: email,
-                                message: message,
-                                created_at: new Date()
-                            }
-                        ]);
-                    
-                    if (error) throw error;
-                    
-                    alert('Thank you for your message! I will get back to you soon.');
-                    contactForm.reset();
-                } catch (error) {
-                    console.error("Error submitting contact form:", error);
-                    alert("Failed to send message. Please try again.");
-                }
-            }
-        });
-    }
-}
-
 // Initialize all features
 document.addEventListener('DOMContentLoaded', () => {
-    initChat();
     initFileUpload();
-    initContactForm();
 });
