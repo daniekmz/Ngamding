@@ -697,16 +697,3 @@ body.light-mode {
     color: var(--primary-btn);
     transform: translateY(-1px);
 }
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .file-list-header,
-    .file-item {
-        grid-template-columns: 2fr 1fr;
-    }
-    
-    .file-list-header span:last-child,
-    .file-item span:last-child {
-        display: none;
-    }
-}
