@@ -1,9 +1,44 @@
-// Toggle Sidebar
-document.querySelector('.menu-toggle').addEventListener('click', () => {
-    const sidebar = document.querySelector('.sidebar');
-    sidebar.classList.toggle('active');
+import { db, storage } from './config.js';
 
-    // Animate menu items
+// DOM Elements
+const menuToggle = document.querySelector('.menu-toggle');
+const sidebar = document.querySelector('.sidebar');
+const navLinks = document.querySelectorAll('.sidebar-nav a');
+const themeToggle = document.getElementById('theme-toggle');
+const openChatBtn = document.getElementById('open-chat');
+
+// Initialize the app
+function init() {
+    setupEventListeners();
+    setupScrollAnimation();
+}
+
+// Set up event listeners
+function setupEventListeners() {
+    // Toggle sidebar
+    menuToggle.addEventListener('click', toggleSidebar);
+    
+    // Navigation links
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            navigateToSection(link);
+        });
+    });
+    
+    // Theme toggle
+    themeToggle.addEventListener('click', toggleTheme);
+    
+    // Open chat
+    openChatBtn.addEventListener('click', toggleChatSection);
+}
+
+function toggleSidebar() {
+    sidebar.classList.toggle('active');
+    animateNavItems();
+}
+
+function animateNavItems() {
     const navItems = document.querySelectorAll('.sidebar-nav li');
     navItems.forEach((item, index) => {
         setTimeout(() => {
@@ -11,73 +46,48 @@ document.querySelector('.menu-toggle').addEventListener('click', () => {
             item.style.transform = 'translateX(0)';
         }, index * 100);
     });
-});
+}
 
-// Section Navigation
-document.querySelectorAll('.sidebar-nav a').forEach(link => {
-    link.addEventListener('click', (e) => {
-        e.preventDefault();
-        const targetId = link.getAttribute('href');
-        showSection(targetId);
-        setActiveLink(link);
-    });
-});
-
-function showSection(sectionId) {
+function navigateToSection(link) {
+    // Remove active class from all links and sections
+    navLinks.forEach(link => link.classList.remove('active'));
     document.querySelectorAll('.section').forEach(section => {
         section.classList.remove('active');
     });
-    document.querySelector(sectionId).classList.add('active');
+    
+    // Add active class to clicked link and corresponding section
+    link.classList.add('active');
+    const targetSection = document.querySelector(link.getAttribute('href'));
+    targetSection.classList.add('active');
 }
 
-function setActiveLink(activeLink) {
-    document.querySelectorAll('.sidebar-nav a').forEach(link => {
-        link.classList.remove('active');
-    });
-    activeLink.classList.add('active');
-}
-
-// Theme Toggle
-document.getElementById('theme-toggle').addEventListener('click', () => {
+function toggleTheme() {
     document.body.classList.toggle('dark-mode');
     document.body.classList.toggle('light-mode');
+    
     const isDarkMode = document.body.classList.contains('dark-mode');
-    document.getElementById('theme-toggle').innerHTML = isDarkMode 
+    themeToggle.innerHTML = isDarkMode 
         ? '<i class="fas fa-sun"></i> Light Mode' 
         : '<i class="fas fa-moon"></i> Dark Mode';
-});
+}
 
-// Scroll Animation
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.classList.add('active');
-        }
+function toggleChatSection() {
+    document.getElementById('chat-section').classList.toggle('active');
+}
+
+function setupScrollAnimation() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach((el) => {
+        observer.observe(el);
     });
-}, { threshold: 0.1 });
-
-document.querySelectorAll('.animate-on-scroll').forEach((el) => {
-    observer.observe(el);
-});
-
-// Initialize Tooltips
-document.querySelectorAll('[data-tooltip]').forEach(element => {
-    element.addEventListener('mouseenter', createTooltip);
-    element.addEventListener('mouseleave', removeTooltip);
-});
-
-function createTooltip(e) {
-    const tooltip = document.createElement('div');
-    tooltip.className = 'tooltip';
-    tooltip.textContent = e.target.getAttribute('data-tooltip');
-    document.body.appendChild(tooltip);
-    
-    const rect = e.target.getBoundingClientRect();
-    tooltip.style.left = `${rect.left + rect.width/2 - tooltip.offsetWidth/2}px`;
-    tooltip.style.top = `${rect.top - tooltip.offsetHeight - 10}px`;
 }
 
-function removeTooltip() {
-    const tooltip = document.querySelector('.tooltip');
-    if (tooltip) tooltip.remove();
-}
+// Initialize the application
+document.addEventListener('DOMContentLoaded', init);

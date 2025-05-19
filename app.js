@@ -1,9 +1,12 @@
-// Chat Functions
-function initializeChat() {
+import { db, storage } from './config.js';
+
+// Initialize Chat
+function initChat() {
     const chatForm = document.getElementById('chat-form');
     const chatMessages = document.getElementById('chat-messages');
 
-    // Send message
+    if (!chatForm) return;
+
     chatForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const name = document.getElementById('chat-name').value;
@@ -19,91 +22,135 @@ function initializeChat() {
                 document.getElementById('chat-message').value = '';
             } catch (error) {
                 console.error("Error sending message:", error);
+                alert("Failed to send message. Please try again.");
             }
         }
     });
 
-    // Receive messages
+    // Load messages
     db.collection("messages")
         .orderBy("timestamp", "asc")
         .onSnapshot(snapshot => {
             chatMessages.innerHTML = '';
             snapshot.forEach(doc => {
                 const message = doc.data();
-                const messageElement = document.createElement('div');
-                messageElement.className = 'message';
-                messageElement.innerHTML = `
-                    <strong>${message.name}</strong>
-                    <p>${message.message}</p>
-                    <small>${new Date(message.timestamp?.toDate()).toLocaleString()}</small>
-                `;
-                chatMessages.appendChild(messageElement);
+                displayMessage(message);
             });
             chatMessages.scrollTop = chatMessages.scrollHeight;
         });
 }
 
-// File Upload Functions
-function initializeFileUpload() {
+function displayMessage(message) {
+    const chatMessages = document.getElementById('chat-messages');
+    const messageElement = document.createElement('div');
+    messageElement.className = 'message';
+    messageElement.innerHTML = `
+        <strong>${message.name}</strong>
+        <p>${message.message}</p>
+        <small>${message.timestamp?.toDate().toLocaleString()}</small>
+    `;
+    chatMessages.appendChild(messageElement);
+}
+
+// Initialize File Upload
+function initFileUpload() {
     const fileInput = document.getElementById('file-upload');
     const uploadButton = document.getElementById('upload-button');
     const fileList = document.getElementById('file-list');
+    const progressBar = document.querySelector('.progress-bar');
 
-    // Upload file to Firebase Storage
-    uploadButton.addEventListener('click', async (e) => {
+    if (!fileInput || !uploadButton) return;
+
+    uploadButton.addEventListener('click', (e) => {
         e.preventDefault();
-        const file = fileInput.files[0];
-        
-        if (file) {
-            try {
-                const storageRef = storage.ref(`uploads/${file.name}`);
-                const uploadTask = storageRef.put(file);
-                
-                uploadTask.on('state_changed',
-                    (snapshot) => {
-                        // Progress tracking
-                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                        console.log(`Upload progress: ${progress}%`);
-                    },
-                    (error) => {
-                        console.error("Upload error:", error);
-                    },
-                    async () => {
-                        const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-                        await db.collection("files").add({
-                            name: file.name,
-                            size: file.size,
-                            url: downloadURL,
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-                        fileInput.value = '';
-                        loadFiles();
-                    }
-                );
-            } catch (error) {
-                console.error("Upload failed:", error);
-            }
+        fileInput.click();
+    });
+
+    fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+            // Create storage reference
+            const storageRef = storage.ref(`uploads/${file.name}`);
+            
+            // Upload file
+            const uploadTask = storageRef.put(file);
+            
+            // Track upload progress
+            uploadTask.on('state_changed',
+                (snapshot) => {
+                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    progressBar.style.width = `${progress}%`;
+                },
+                (error) => {
+                    console.error("Upload error:", error);
+                    progressBar.style.width = '0%';
+                    alert("Upload failed. Please try again.");
+                },
+                async () => {
+                    // Upload complete
+                    const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
+                    
+                    // Save file metadata to Firestore
+                    await db.collection("files").add({
+                        name: file.name,
+                        size: file.size,
+                        type: file.type,
+                        url: downloadURL,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Reset input and progress
+                    fileInput.value = '';
+                    progressBar.style.width = '0%';
+                    
+                    // Refresh file list
+                    loadFiles();
+                }
+            );
+        } catch (error) {
+            console.error("Upload failed:", error);
+            progressBar.style.width = '0%';
+            alert("Upload failed. Please try again.");
         }
     });
 
     // Load files from Firestore
     async function loadFiles() {
-        fileList.innerHTML = '<div class="file-list-header"><span>File Name</span><span>Size</span><span>Action</span></div>';
-        
-        const snapshot = await db.collection("files").orderBy("timestamp", "desc").get();
-        snapshot.forEach(doc => {
-            const file = doc.data();
-            const fileItem = document.createElement('div');
-            fileItem.className = 'file-item';
-            fileItem.innerHTML = `
-                <span>${file.name}</span>
-                <span>${(file.size / 1024).toFixed(2)} KB</span>
-                <a href="${file.url}" download="${file.name}" class="download-btn">
-                    <i class="fas fa-download"></i>
-                </a>
-            `;
-            fileList.appendChild(fileItem);
-        });
+        try {
+            const snapshot = await db.collection("files")
+                .orderBy("timestamp", "desc")
+                .get();
+            
+            fileList.innerHTML = '<div class="file-list-header"><span>File Name</span><span>Size</span><span>Action</span></div>';
+            
+            snapshot.forEach(doc => {
+                const file = doc.data();
+                displayFile(file);
+            });
+        } catch (error) {
+            console.error("Error loading files:", error);
+        }
+    }
+
+    function displayFile(file) {
+        const fileItem = document.createElement('div');
+        fileItem.className = 'file-item';
+        fileItem.innerHTML = `
+            <span>${file.name}</span>
+            <span>${formatFileSize(file.size)}</span>
+            <a href="${file.url}" download="${file.name}" class="download-btn">
+                <i class="fas fa-download"></i> Download
+            </a>
+        `;
+        fileList.appendChild(fileItem);
+    }
+
+    function formatFileSize(bytes) {
+        if (bytes < 1024) return `${bytes} B`;
+        if (bytes < 1048576) return `${(bytes / 1024).toFixed(2)} KB`;
+        return `${(bytes / 1048576).toFixed(2)} MB`;
     }
 
     // Initial load
@@ -112,11 +159,6 @@ function initializeFileUpload() {
 
 // Initialize all features
 document.addEventListener('DOMContentLoaded', () => {
-    initializeChat();
-    initializeFileUpload();
-    
-    // Toggle Chat Section
-    document.getElementById('open-chat').addEventListener('click', () => {
-        document.getElementById('chat-section').classList.toggle('active');
-    });
+    initChat();
+    initFileUpload();
 });

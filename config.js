@@ -1,3 +1,4 @@
+// Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCLEaHPBo832WpXuLg-JytYqCYpxTELmzY",
   authDomain: "datakomen.firebaseapp.com",
@@ -9,5 +10,10 @@ const firebaseConfig = {
 
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
+
+// Initialize services
 const db = firebase.firestore();
 const storage = firebase.storage();
+
+// Export services
+export { db, storage };
