@@ -1,4 +1,8 @@
 // Firebase configuration
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/firestore';
+import 'firebase/compat/storage';
+
 const firebaseConfig = {
   apiKey: "AIzaSyCLEaHPBo832WpXuLg-JytYqCYpxTELmzY",
   authDomain: "datakomen.firebaseapp.com",
@@ -9,7 +13,7 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-firebase.initializeApp(firebaseConfig);
+const app = firebase.initializeApp(firebaseConfig);
 
 // Initialize services
 const db = firebase.firestore();

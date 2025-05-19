@@ -16,21 +16,29 @@ function init() {
 // Set up event listeners
 function setupEventListeners() {
     // Toggle sidebar
-    menuToggle.addEventListener('click', toggleSidebar);
+    if (menuToggle) {
+        menuToggle.addEventListener('click', toggleSidebar);
+    }
     
     // Navigation links
-    navLinks.forEach(link => {
-        link.addEventListener('click', (e) => {
-            e.preventDefault();
-            navigateToSection(link);
+    if (navLinks) {
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateToSection(link);
+            });
         });
-    });
+    }
     
     // Theme toggle
-    themeToggle.addEventListener('click', toggleTheme);
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+    }
     
     // Open chat
-    openChatBtn.addEventListener('click', toggleChatSection);
+    if (openChatBtn) {
+        openChatBtn.addEventListener('click', toggleChatSection);
+    }
 }
 
 function toggleSidebar() {
@@ -58,7 +66,14 @@ function navigateToSection(link) {
     // Add active class to clicked link and corresponding section
     link.classList.add('active');
     const targetSection = document.querySelector(link.getAttribute('href'));
-    targetSection.classList.add('active');
+    if (targetSection) {
+        targetSection.classList.add('active');
+    }
+    
+    // Close sidebar on mobile
+    if (window.innerWidth < 768) {
+        sidebar.classList.remove('active');
+    }
 }
 
 function toggleTheme() {
@@ -72,7 +87,10 @@ function toggleTheme() {
 }
 
 function toggleChatSection() {
-    document.getElementById('chat-section').classList.toggle('active');
+    const chatSection = document.getElementById('chat-section');
+    if (chatSection) {
+        chatSection.classList.toggle('active');
+    }
 }
 
 function setupScrollAnimation() {

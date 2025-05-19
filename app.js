@@ -5,7 +5,7 @@ function initChat() {
     const chatForm = document.getElementById('chat-form');
     const chatMessages = document.getElementById('chat-messages');
 
-    if (!chatForm) return;
+    if (!chatForm || !chatMessages) return;
 
     chatForm.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -42,6 +42,8 @@ function initChat() {
 
 function displayMessage(message) {
     const chatMessages = document.getElementById('chat-messages');
+    if (!chatMessages) return;
+    
     const messageElement = document.createElement('div');
     messageElement.className = 'message';
     messageElement.innerHTML = `
@@ -59,7 +61,7 @@ function initFileUpload() {
     const fileList = document.getElementById('file-list');
     const progressBar = document.querySelector('.progress-bar');
 
-    if (!fileInput || !uploadButton) return;
+    if (!fileInput || !uploadButton || !fileList || !progressBar) return;
 
     uploadButton.addEventListener('click', (e) => {
         e.preventDefault();
