@@ -243,13 +243,22 @@ body.light-mode {
 }
 
 /* Tooltip */
-.tooltip {
+[data-tooltip] {
+    position: relative;
+}
+
+[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
     position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
     background: var(--card-bg);
     color: var(--text-color);
     padding: 5px 10px;
     border-radius: 5px;
     font-size: 0.8rem;
+    white-space: nowrap;
     z-index: 100;
     pointer-events: none;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
@@ -265,6 +274,7 @@ body.light-mode {
     display: none;
     max-width: 1200px;
     margin: 0 auto;
+    padding: 20px 0;
 }
 
 .section.active {
@@ -354,6 +364,7 @@ body.light-mode {
     border-radius: 10px;
     overflow: hidden;
     transition: transform 0.3s ease;
+    position: relative;
 }
 
 .portfolio-item:hover {
@@ -367,7 +378,8 @@ body.light-mode {
 
 .portfolio-image img {
     width: 100%;
-    height: auto;
+    height: 250px;
+    object-fit: cover;
     display: block;
     transition: transform 0.5s ease;
 }
@@ -402,6 +414,11 @@ body.light-mode {
     border-radius: 10px;
     text-align: center;
     margin-bottom: 30px;
+    border: 2px dashed var(--accent-color);
+}
+
+#file-upload {
+    display: none;
 }
 
 .file-list {
@@ -429,11 +446,32 @@ body.light-mode {
 
 .download-btn {
     color: var(--accent-color);
-    transition: color 0.3s;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: center;
 }
 
 .download-btn:hover {
-    color: var(--text-color);
+    color: var(--primary-btn);
+    transform: translateY(-1px);
+}
+
+.upload-progress {
+    margin-top: 1rem;
+    height: 6px;
+    background: var(--card-bg);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--accent-color);
+    width: 0%;
+    transition: width 0.3s ease;
 }
 
 /* Contact Section */
@@ -595,5 +633,18 @@ body.light-mode {
     .main-content {
         padding: 20px;
     }
-}
 
+    .sidebar {
+        width: 250px;
+    }
+
+    .file-list-header,
+    .file-item {
+        grid-template-columns: 2fr 1fr;
+    }
+    
+    .file-list-header span:last-child,
+    .file-item span:last-child {
+        display: none;
+    }
+}

@@ -1,5 +1,3 @@
-import { db, storage } from './config.js';
-
 // DOM Elements
 const menuToggle = document.querySelector('.menu-toggle');
 const sidebar = document.querySelector('.sidebar');
@@ -11,6 +9,7 @@ const openChatBtn = document.getElementById('open-chat');
 function init() {
     setupEventListeners();
     setupScrollAnimation();
+    setupNavigation();
 }
 
 // Set up event listeners
@@ -18,16 +17,6 @@ function setupEventListeners() {
     // Toggle sidebar
     if (menuToggle) {
         menuToggle.addEventListener('click', toggleSidebar);
-    }
-    
-    // Navigation links
-    if (navLinks) {
-        navLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-                navigateToSection(link);
-            });
-        });
     }
     
     // Theme toggle
@@ -38,6 +27,18 @@ function setupEventListeners() {
     // Open chat
     if (openChatBtn) {
         openChatBtn.addEventListener('click', toggleChatSection);
+    }
+}
+
+// Setup navigation
+function setupNavigation() {
+    if (navLinks) {
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateToSection(link);
+            });
+        });
     }
 }
 
@@ -90,6 +91,10 @@ function toggleChatSection() {
     const chatSection = document.getElementById('chat-section');
     if (chatSection) {
         chatSection.classList.toggle('active');
+        // Scroll to chat section if it's being opened
+        if (chatSection.classList.contains('active')) {
+            chatSection.scrollIntoView({ behavior: 'smooth' });
+        }
     }
 }
 

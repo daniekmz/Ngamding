@@ -1,5 +1,3 @@
-import { db, storage } from './config.js';
-
 // Initialize Chat
 function initChat() {
     const chatForm = document.getElementById('chat-form');
@@ -159,8 +157,28 @@ function initFileUpload() {
     loadFiles();
 }
 
+// Initialize Contact Form
+function initContactForm() {
+    const contactForm = document.getElementById('contact-form');
+    
+    if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('contact-name').value;
+            const email = document.getElementById('contact-email').value;
+            const message = document.getElementById('contact-message').value;
+            
+            // Here you would typically send the data to a server
+            console.log('Contact form submitted:', { name, email, message });
+            alert('Thank you for your message! I will get back to you soon.');
+            contactForm.reset();
+        });
+    }
+}
+
 // Initialize all features
 document.addEventListener('DOMContentLoaded', () => {
     initChat();
     initFileUpload();
+    initContactForm();
 });
