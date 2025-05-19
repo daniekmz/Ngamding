@@ -1,116 +1,116 @@
-/* Add this to your existing styles.css */
-.file-upload-container {
-    margin-top: 30px;
-    background: var(--card-bg);
-    padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+// DOM Elements
+const menuToggle = document.querySelector('.menu-toggle');
+const sidebar = document.querySelector('.sidebar');
+const navLinks = document.querySelectorAll('.sidebar-nav a');
+const themeToggle = document.getElementById('theme-toggle');
+const openChatBtn = document.getElementById('open-chat');
+
+// Initialize the app
+function init() {
+    setupEventListeners();
+    setupScrollAnimation();
+    setupNavigation();
 }
 
-.upload-box {
-    border: 2px dashed var(--accent-color);
-    padding: 2rem;
-    border-radius: 10px;
-    text-align: center;
-    margin-bottom: 1.5rem;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.upload-box:hover {
-    background: var(--hover-bg);
-}
-
-#file-upload {
-    display: none;
-}
-
-#upload-button {
-    background: var(--accent-color);
-    color: white;
-    padding: 0.75rem 1.5rem;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: inline-block;
-    font-size: 1rem;
-    border: none;
-}
-
-#upload-button:hover {
-    background: var(--primary-btn);
-    transform: translateY(-2px);
-}
-
-.upload-progress {
-    margin-top: 1rem;
-    height: 6px;
-    background: var(--card-bg);
-    border-radius: 3px;
-    overflow: hidden;
-}
-
-.progress-bar {
-    height: 100%;
-    background: var(--accent-color);
-    width: 0%;
-    transition: width 0.3s ease;
-}
-
-.file-list {
-    margin-top: 1.5rem;
-    background: var(--card-bg);
-    border-radius: 8px;
-    overflow: hidden;
-}
-
-.file-list-header {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    padding: 1rem;
-    background: var(--hover-bg);
-    font-weight: bold;
-}
-
-.file-item {
-    display: grid;
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-    align-items: center;
-    padding: 1rem;
-    border-bottom: 1px solid var(--hover-bg);
-    transition: background 0.2s ease;
-}
-
-.file-item:hover {
-    background: var(--hover-bg);
-}
-
-.download-btn {
-    color: var(--accent-color);
-    text-decoration: none;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    justify-content: center;
-}
-
-.download-btn:hover {
-    color: var(--primary-btn);
-    transform: translateY(-1px);
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-    .file-list-header,
-    .file-item {
-        grid-template-columns: 2fr 1fr;
+// Set up event listeners
+function setupEventListeners() {
+    // Toggle sidebar
+    if (menuToggle) {
+        menuToggle.addEventListener('click', toggleSidebar);
     }
     
-    .file-list-header span:nth-child(3),
-    .file-list-header span:nth-child(4),
-    .file-item span:nth-child(3),
-    .file-item span:nth-child(4) {
-        display: none;
+    // Theme toggle
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+    }
+    
+    // Open chat
+    if (openChatBtn) {
+        openChatBtn.addEventListener('click', toggleChatSection);
     }
 }
+
+// Setup navigation
+function setupNavigation() {
+    if (navLinks) {
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                navigateToSection(link);
+            });
+        });
+    }
+}
+
+function toggleSidebar() {
+    sidebar.classList.toggle('active');
+    animateNavItems();
+}
+
+function animateNavItems() {
+    const navItems = document.querySelectorAll('.sidebar-nav li');
+    navItems.forEach((item, index) => {
+        setTimeout(() => {
+            item.style.opacity = '1';
+            item.style.transform = 'translateX(0)';
+        }, index * 100);
+    });
+}
+
+function navigateToSection(link) {
+    // Remove active class from all links and sections
+    navLinks.forEach(link => link.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    // Add active class to clicked link and corresponding section
+    link.classList.add('active');
+    const targetSection = document.querySelector(link.getAttribute('href'));
+    if (targetSection) {
+        targetSection.classList.add('active');
+    }
+    
+    // Close sidebar on mobile
+    if (window.innerWidth < 768) {
+        sidebar.classList.remove('active');
+    }
+}
+
+function toggleTheme() {
+    document.body.classList.toggle('dark-mode');
+    document.body.classList.toggle('light-mode');
+    
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    themeToggle.innerHTML = isDarkMode 
+        ? '<i class="fas fa-sun"></i> Light Mode' 
+        : '<i class="fas fa-moon"></i> Dark Mode';
+}
+
+function toggleChatSection() {
+    const chatSection = document.getElementById('chat-section');
+    if (chatSection) {
+        chatSection.classList.toggle('active');
+        // Scroll to chat section if it's being opened
+        if (chatSection.classList.contains('active')) {
+            chatSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
+}
+
+function setupScrollAnimation() {
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('active');
+            }
+        });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.animate-on-scroll').forEach((el) => {
+        observer.observe(el);
+    });
+}
+
+// Initialize the application
+document.addEventListener('DOMContentLoaded', init);

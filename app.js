@@ -71,11 +71,8 @@ function initFileUpload() {
         if (!file) return;
 
         try {
-            // Create storage reference with unique filename
-            const timestamp = Date.now();
-            const fileExtension = file.name.split('.').pop();
-            const filename = `${timestamp}.${fileExtension}`;
-            const storageRef = storage.ref(`uploads/${filename}`);
+            // Create storage reference
+            const storageRef = storage.ref(`uploads/${file.name}`);
             
             // Upload file
             const uploadTask = storageRef.put(file);
@@ -94,17 +91,14 @@ function initFileUpload() {
                 async () => {
                     // Upload complete
                     const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-                    const uploadTime = new Date();
                     
                     // Save file metadata to Firestore
                     await db.collection("files").add({
-                        originalName: file.name,
-                        name: filename,
+                        name: file.name,
                         size: file.size,
                         type: file.type,
                         url: downloadURL,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                        uploadTime: uploadTime.toISOString()
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
                     });
                     
                     // Reset input and progress
@@ -129,14 +123,7 @@ function initFileUpload() {
                 .orderBy("timestamp", "desc")
                 .get();
             
-            fileList.innerHTML = `
-                <div class="file-list-header">
-                    <span>File Name</span>
-                    <span>Size</span>
-                    <span>Uploaded At</span>
-                    <span>Action</span>
-                </div>
-            `;
+            fileList.innerHTML = '<div class="file-list-header"><span>File Name</span><span>Size</span><span>Action</span></div>';
             
             snapshot.forEach(doc => {
                 const file = doc.data();
@@ -150,15 +137,10 @@ function initFileUpload() {
     function displayFile(file) {
         const fileItem = document.createElement('div');
         fileItem.className = 'file-item';
-        
-        const uploadDate = new Date(file.uploadTime || file.timestamp?.toDate());
-        const formattedDate = uploadDate.toLocaleString();
-        
         fileItem.innerHTML = `
-            <span>${file.originalName || file.name}</span>
+            <span>${file.name}</span>
             <span>${formatFileSize(file.size)}</span>
-            <span>${formattedDate}</span>
-            <a href="${file.url}" download="${file.originalName || file.name}" class="download-btn">
+            <a href="${file.url}" download="${file.name}" class="download-btn">
                 <i class="fas fa-download"></i> Download
             </a>
         `;
