@@ -52,40 +52,58 @@ function displayMessage(message) {
     chatMessages.appendChild(messageElement);
 }
 
-// Initialize File Upload
+// Enhanced File Upload Functionality
 function initFileUpload() {
     const fileInput = document.getElementById('file-upload');
-    const uploadButton = document.getElementById('upload-button');
+    const dropZone = document.getElementById('drop-zone');
     const fileList = document.getElementById('file-list');
     const progressBar = document.querySelector('.progress-bar');
+    const progressText = document.querySelector('.progress-text');
 
-    if (!fileInput || !uploadButton || !fileList || !progressBar) return;
-
-    uploadButton.addEventListener('click', (e) => {
+    // Drag & drop handlers
+    dropZone.addEventListener('dragover', (e) => {
         e.preventDefault();
-        fileInput.click();
+        dropZone.style.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-btn');
     });
 
-    fileInput.addEventListener('change', async (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
+    dropZone.addEventListener('dragleave', () => {
+        dropZone.style.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color');
+    });
 
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = getComputedStyle(document.documentElement).getPropertyValue('--accent-color');
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            fileInput.files = files;
+            handleFileUpload(files[0]);
+        }
+    });
+
+    // Click handler
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    // File input change handler
+    fileInput.addEventListener('change', (e) => {
+        const file = e.target.files[0];
+        if (file) handleFileUpload(file);
+    });
+
+    async function handleFileUpload(file) {
         try {
-            // Create storage reference
-            const storageRef = storage.ref(`uploads/${file.name}`);
-            
-            // Upload file
+            const storageRef = storage.ref(`uploads/${Date.now()}_${file.name}`);
             const uploadTask = storageRef.put(file);
             
-            // Track upload progress
             uploadTask.on('state_changed',
                 (snapshot) => {
                     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
                     progressBar.style.width = `${progress}%`;
+                    progressText.textContent = `${Math.round(progress)}%`;
                 },
                 (error) => {
                     console.error("Upload error:", error);
                     progressBar.style.width = '0%';
+                    progressText.textContent = '0%';
                     alert("Upload failed. Please try again.");
                 },
                 async () => {
@@ -104,6 +122,7 @@ function initFileUpload() {
                     // Reset input and progress
                     fileInput.value = '';
                     progressBar.style.width = '0%';
+                    progressText.textContent = '0%';
                     
                     // Refresh file list
                     loadFiles();
@@ -112,9 +131,10 @@ function initFileUpload() {
         } catch (error) {
             console.error("Upload failed:", error);
             progressBar.style.width = '0%';
+            progressText.textContent = '0%';
             alert("Upload failed. Please try again.");
         }
-    });
+    }
 
     // Load files from Firestore
     async function loadFiles() {
@@ -123,7 +143,7 @@ function initFileUpload() {
                 .orderBy("timestamp", "desc")
                 .get();
             
-            fileList.innerHTML = '<div class="file-list-header"><span>File Name</span><span>Size</span><span>Action</span></div>';
+            fileList.innerHTML = '<div class="file-list-header"><span>File Name</span><span>Date</span><span>Size</span><span>Action</span></div>';
             
             snapshot.forEach(doc => {
                 const file = doc.data();
@@ -139,10 +159,13 @@ function initFileUpload() {
         fileItem.className = 'file-item';
         fileItem.innerHTML = `
             <span>${file.name}</span>
+            <span class="file-date">${file.timestamp?.toDate().toLocaleDateString()}</span>
             <span>${formatFileSize(file.size)}</span>
-            <a href="${file.url}" download="${file.name}" class="download-btn">
-                <i class="fas fa-download"></i> Download
-            </a>
+            <div class="file-actions">
+                <a href="${file.url}" download="${file.name}" class="download-btn">
+                    <i class="fas fa-download"></i> Download
+                </a>
+            </div>
         `;
         fileList.appendChild(fileItem);
     }

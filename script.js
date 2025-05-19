@@ -10,6 +10,7 @@ function init() {
     setupEventListeners();
     setupScrollAnimation();
     setupNavigation();
+    setInitialTheme();
 }
 
 // Set up event listeners
@@ -27,6 +28,20 @@ function setupEventListeners() {
     // Open chat
     if (openChatBtn) {
         openChatBtn.addEventListener('click', toggleChatSection);
+    }
+}
+
+// Set initial theme based on preference
+function setInitialTheme() {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    if (prefersDark) {
+        document.body.classList.add('dark-mode');
+        document.body.classList.remove('light-mode');
+        themeToggle.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+    } else {
+        document.body.classList.add('light-mode');
+        document.body.classList.remove('dark-mode');
+        themeToggle.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
     }
 }
 

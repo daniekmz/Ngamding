@@ -127,17 +127,22 @@
         <section id="files" class="section">
             <h2>File Upload</h2>
             <div class="file-upload-container animate-on-scroll">
-                <div class="upload-box">
+                <div class="upload-box" id="drop-zone">
+                    <i class="fas fa-cloud-upload-alt fa-3x"></i>
+                    <p>Drag & drop files or <span class="browse-link">browse</span></p>
                     <input type="file" id="file-upload">
-                    <button id="upload-button" class="btn primary">
-                        <i class="fas fa-upload"></i> Select File
-                    </button>
                     <div class="upload-progress">
                         <div class="progress-bar"></div>
+                        <span class="progress-text">0%</span>
                     </div>
                 </div>
                 <div id="file-list" class="file-list">
-                    <!-- Files will be loaded here dynamically -->
+                    <div class="file-list-header">
+                        <span>File Name</span>
+                        <span>Date</span>
+                        <span>Size</span>
+                        <span>Action</span>
+                    </div>
                 </div>
             </div>
         </section>
