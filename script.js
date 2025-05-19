@@ -53,3 +53,27 @@ const observer = new IntersectionObserver((entries) => {
 document.querySelectorAll('.animate-on-scroll').forEach((el) => {
     observer.observe(el);
 });
+
+// Initialize tooltips
+function initializeTooltips() {
+    const tooltipElements = document.querySelectorAll('[data-tooltip]');
+    
+    tooltipElements.forEach(element => {
+        element.addEventListener('mouseenter', () => {
+            const tooltip = document.createElement('div');
+            tooltip.className = 'tooltip';
+            tooltip.textContent = element.getAttribute('data-tooltip');
+            document.body.appendChild(tooltip);
+            
+            const rect = element.getBoundingClientRect();
+            tooltip.style.left = `${rect.left + rect.width / 2 - tooltip.offsetWidth / 2}px`;
+            tooltip.style.top = `${rect.top - tooltip.offsetHeight - 10}px`;
+            
+            element.addEventListener('mouseleave', () => {
+                tooltip.remove();
+            }, { once: true });
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initializeTooltips);

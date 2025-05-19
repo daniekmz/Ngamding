@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portofolio Saya</title>
+    <title>Portfolio - Danie</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
@@ -27,6 +27,7 @@
                 <li><a href="#home" class="active"><i class="fas fa-home"></i> Home</a></li>
                 <li><a href="#about"><i class="fas fa-user"></i> About Me</a></li>
                 <li><a href="#portfolio"><i class="fas fa-briefcase"></i> Portfolio</a></li>
+                <li><a href="#files"><i class="fas fa-file-upload"></i> File Upload</a></li>
                 <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
                 <li>
                     <button id="theme-toggle" class="theme-toggle">
@@ -36,11 +37,11 @@
             </ul>
         </nav>
         <div class="social-links">
-            <a href="https://linkedin.com" target="_blank"><i class="fab fa-linkedin"></i></a>
-            <a href="https://instagram.com/danie_orlando_arsenio" target="_blank"><i class="fab fa-instagram"></i></a>
-            <a href="https://facebook.com/daniekmz" target="_blank"><i class="fab fa-facebook"></i></a>
-            <a href="https://github.com/daniekmz" target="_blank"><i class="fab fa-github"></i></a>
-            <a href="https://mywish.vercel.app/" target="_blank"><i class="fas fa-cake"></i></a>
+            <a href="https://linkedin.com" target="_blank" data-tooltip="LinkedIn"><i class="fab fa-linkedin"></i></a>
+            <a href="https://instagram.com/danie_orlando_arsenio" target="_blank" data-tooltip="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://facebook.com/daniekmz" target="_blank" data-tooltip="Facebook"><i class="fab fa-facebook"></i></a>
+            <a href="https://github.com/daniekmz" target="_blank" data-tooltip="GitHub"><i class="fab fa-github"></i></a>
+            <a href="https://mywish.vercel.app/" target="_blank" data-tooltip="My Wish"><i class="fas fa-cake"></i></a>
         </div>
     </aside>
 
@@ -53,8 +54,14 @@
     <main class="main-content">
         <!-- Home Section -->
         <section id="home" class="section active">
-            <h1>Halo, Saya danie</h1>
-            <p>Welcome to my portfolio!</p>
+            <div class="hero animate-on-scroll">
+                <h1>Halo, Saya <span class="highlight">Danie</span></h1>
+                <p class="subtitle">Web Developer & Blockchain Enthusiast</p>
+                <div class="cta-buttons">
+                    <a href="#portfolio" class="btn primary">View My Work</a>
+                    <a href="#contact" class="btn secondary">Contact Me</a>
+                </div>
+            </div>
         </section>
 
         <!-- About Section -->
@@ -71,6 +78,9 @@
                         <span class="skill-item">HTML5</span>
                         <span class="skill-item">CSS</span>
                         <span class="skill-item">JavaScript</span>
+                        <span class="skill-item">React</span>
+                        <span class="skill-item">Node.js</span>
+                        <span class="skill-item">Blockchain</span>
                     </div>
                 </div>
             </div>
@@ -79,40 +89,97 @@
         <!-- Portfolio Section -->
         <section id="portfolio" class="section">
             <h2>Portfolio</h2>
-            <div class="portfolio-items">
-                <div class="item">Proyek 1</div>
-                <div class="item">Proyek 2</div>
-                <div class="item">Proyek 3</div>
+            <div class="portfolio-grid">
+                <div class="portfolio-item animate-on-scroll">
+                    <div class="portfolio-image">
+                        <img src="https://via.placeholder.com/400x300" alt="Project 1">
+                        <div class="portfolio-overlay">
+                            <h3>Web3 Dashboard</h3>
+                            <p>A blockchain analytics dashboard</p>
+                            <a href="#" class="btn small">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item animate-on-scroll">
+                    <div class="portfolio-image">
+                        <img src="https://via.placeholder.com/400x300" alt="Project 2">
+                        <div class="portfolio-overlay">
+                            <h3>NFT Marketplace</h3>
+                            <p>Digital art marketplace</p>
+                            <a href="#" class="btn small">View Details</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="portfolio-item animate-on-scroll">
+                    <div class="portfolio-image">
+                        <img src="https://via.placeholder.com/400x300" alt="Project 3">
+                        <div class="portfolio-overlay">
+                            <h3>Crypto Tracker</h3>
+                            <p>Real-time cryptocurrency tracker</p>
+                            <a href="#" class="btn small">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- File Upload Section -->
+        <section id="files" class="section">
+            <h2>File Upload</h2>
+            <div class="file-upload-container animate-on-scroll">
+                <div class="upload-box">
+                    <input type="file" id="file-upload">
+                    <button id="upload-button" class="btn primary">
+                        <i class="fas fa-upload"></i> Upload File
+                    </button>
+                </div>
+                <div id="file-list" class="file-list">
+                    <h3>Uploaded Files</h3>
+                    <div class="file-list-header">
+                        <span>File Name</span>
+                        <span>Size</span>
+                        <span>Action</span>
+                    </div>
+                    <!-- Files will be listed here dynamically -->
+                </div>
             </div>
         </section>
 
         <!-- Contact Section -->
         <section id="contact" class="section">
             <h2>Kontak</h2>
-            <form id="contact-form">
-                <input type="text" placeholder="Nama Anda" required>
-                <input type="email" placeholder="Email Anda" required>
-                <textarea placeholder="Pesan Anda" required></textarea>
-                <button type="submit">Kirim</button>
-            </form>
+            <div class="contact-container animate-on-scroll">
+                <form id="contact-form">
+                    <input type="text" placeholder="Nama Anda" required>
+                    <input type="email" placeholder="Email Anda" required>
+                    <textarea placeholder="Pesan Anda" required></textarea>
+                    <button type="submit" class="btn primary">Kirim</button>
+                </form>
+                <div class="contact-info">
+                    <h3>Contact Information</h3>
+                    <p><i class="fas fa-envelope"></i> email@example.com</p>
+                    <p><i class="fas fa-phone"></i> +123 456 7890</p>
+                    <p><i class="fas fa-map-marker-alt"></i> Jakarta, Indonesia</p>
+                </div>
+            </div>
         </section>
 
         <!-- Chat Section -->
         <section id="chat-section" class="section">
-            <h2>Chat Room</h2>
-            <div id="chat-container">
+            <div class="chat-container animate-on-scroll">
+                <h2>Chat Room</h2>
                 <div id="chat-messages"></div>
                 <form id="chat-form">
                     <input type="text" id="chat-name" placeholder="Nama Anda" required>
                     <textarea id="chat-message" placeholder="Tulis pesan Anda..." required></textarea>
-                    <button type="submit">Kirim</button>
+                    <button type="submit" class="btn primary">Kirim</button>
                 </form>
             </div>
         </section>
     </main>
 
     <!-- Button to Open Chat Section -->
-    <button id="open-chat" class="floating-button">
+    <button id="open-chat" class="floating-button" data-tooltip="Open Chat">
         <i class="fas fa-comments"></i>
     </button>
 
@@ -120,6 +187,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
     <script src="config.js"></script>
+    <script src="script.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
