@@ -596,3 +596,72 @@ body.light-mode {
         padding: 20px;
     }
 }
+
+/* Add these updates to your existing styles */
+.file-upload-container {
+    background: var(--card-bg);
+    padding: 20px;
+    border-radius: 10px;
+    margin-top: 20px;
+}
+
+.upload-box {
+    border: 2px dashed var(--accent-color);
+    padding: 30px;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#file-upload {
+    display: none;
+}
+
+#upload-button {
+    background: var(--accent-color);
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#upload-button:hover {
+    background: var(--primary-btn);
+}
+
+.file-list {
+    margin-top: 20px;
+}
+
+.file-item {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid var(--hover-bg);
+}
+
+.download-btn {
+    color: var(--accent-color);
+    transition: color 0.3s;
+}
+
+.download-btn:hover {
+    color: var(--text-color);
+}
+
+/* Add this for progress indicator */
+.upload-progress {
+    margin-top: 10px;
+    height: 5px;
+    background: var(--card-bg);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--accent-color);
+    transition: width 0.3s;
+}

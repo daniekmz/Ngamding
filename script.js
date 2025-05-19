@@ -1,6 +1,7 @@
 // Toggle Sidebar
 document.querySelector('.menu-toggle').addEventListener('click', () => {
-    document.querySelector('.sidebar').classList.toggle('active');
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.classList.toggle('active');
 
     // Animate menu items
     const navItems = document.querySelectorAll('.sidebar-nav li');
@@ -12,31 +13,36 @@ document.querySelector('.menu-toggle').addEventListener('click', () => {
     });
 });
 
-// Highlight Active Menu and Show Section
-const sections = document.querySelectorAll('.section');
-const navLinks = document.querySelectorAll('.sidebar-nav a');
-
-navLinks.forEach(link => {
+// Section Navigation
+document.querySelectorAll('.sidebar-nav a').forEach(link => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
-
-        // Remove active class from all links and sections
-        navLinks.forEach(link => link.classList.remove('active'));
-        sections.forEach(section => section.classList.remove('active'));
-
-        // Add active class to clicked link and corresponding section
-        link.classList.add('active');
-        const targetSection = document.querySelector(link.getAttribute('href'));
-        targetSection.classList.add('active');
+        const targetId = link.getAttribute('href');
+        showSection(targetId);
+        setActiveLink(link);
     });
 });
 
-// Toggle Dark/Light Mode
-const themeToggle = document.getElementById('theme-toggle');
-themeToggle.addEventListener('click', () => {
+function showSection(sectionId) {
+    document.querySelectorAll('.section').forEach(section => {
+        section.classList.remove('active');
+    });
+    document.querySelector(sectionId).classList.add('active');
+}
+
+function setActiveLink(activeLink) {
+    document.querySelectorAll('.sidebar-nav a').forEach(link => {
+        link.classList.remove('active');
+    });
+    activeLink.classList.add('active');
+}
+
+// Theme Toggle
+document.getElementById('theme-toggle').addEventListener('click', () => {
     document.body.classList.toggle('dark-mode');
     document.body.classList.toggle('light-mode');
-    themeToggle.innerHTML = document.body.classList.contains('dark-mode') 
+    const isDarkMode = document.body.classList.contains('dark-mode');
+    document.getElementById('theme-toggle').innerHTML = isDarkMode 
         ? '<i class="fas fa-sun"></i> Light Mode' 
         : '<i class="fas fa-moon"></i> Dark Mode';
 });
@@ -54,26 +60,24 @@ document.querySelectorAll('.animate-on-scroll').forEach((el) => {
     observer.observe(el);
 });
 
-// Initialize tooltips
-function initializeTooltips() {
-    const tooltipElements = document.querySelectorAll('[data-tooltip]');
+// Initialize Tooltips
+document.querySelectorAll('[data-tooltip]').forEach(element => {
+    element.addEventListener('mouseenter', createTooltip);
+    element.addEventListener('mouseleave', removeTooltip);
+});
+
+function createTooltip(e) {
+    const tooltip = document.createElement('div');
+    tooltip.className = 'tooltip';
+    tooltip.textContent = e.target.getAttribute('data-tooltip');
+    document.body.appendChild(tooltip);
     
-    tooltipElements.forEach(element => {
-        element.addEventListener('mouseenter', () => {
-            const tooltip = document.createElement('div');
-            tooltip.className = 'tooltip';
-            tooltip.textContent = element.getAttribute('data-tooltip');
-            document.body.appendChild(tooltip);
-            
-            const rect = element.getBoundingClientRect();
-            tooltip.style.left = `${rect.left + rect.width / 2 - tooltip.offsetWidth / 2}px`;
-            tooltip.style.top = `${rect.top - tooltip.offsetHeight - 10}px`;
-            
-            element.addEventListener('mouseleave', () => {
-                tooltip.remove();
-            }, { once: true });
-        });
-    });
+    const rect = e.target.getBoundingClientRect();
+    tooltip.style.left = `${rect.left + rect.width/2 - tooltip.offsetWidth/2}px`;
+    tooltip.style.top = `${rect.top - tooltip.offsetHeight - 10}px`;
 }
 
-document.addEventListener('DOMContentLoaded', initializeTooltips);
+function removeTooltip() {
+    const tooltip = document.querySelector('.tooltip');
+    if (tooltip) tooltip.remove();
+}
