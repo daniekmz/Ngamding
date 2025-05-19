@@ -13,4 +13,4 @@ firebase.initializeApp(firebaseConfig);
 
 // Initialize services
 const db = firebase.firestore();
-const storage
+const storage = firebase.storage();
