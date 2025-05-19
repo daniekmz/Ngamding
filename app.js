@@ -1,4 +1,4 @@
-// Initialize Chat
+// Initialize Chat with Supabase
 function initChat() {
     const chatForm = document.getElementById('chat-form');
     const chatMessages = document.getElementById('chat-messages');
@@ -12,11 +12,18 @@ function initChat() {
         
         if (name && message) {
             try {
-                await db.collection("messages").add({
-                    name: name,
-                    message: message,
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
+                const { data, error } = await supabase
+                    .from('messages')
+                    .insert([
+                        { 
+                            name: name, 
+                            message: message,
+                            created_at: new Date()
+                        }
+                    ]);
+                
+                if (error) throw error;
+                
                 document.getElementById('chat-message').value = '';
             } catch (error) {
                 console.error("Error sending message:", error);
@@ -25,17 +32,38 @@ function initChat() {
         }
     });
 
-    // Load messages
-    db.collection("messages")
-        .orderBy("timestamp", "asc")
-        .onSnapshot(snapshot => {
-            chatMessages.innerHTML = '';
-            snapshot.forEach(doc => {
-                const message = doc.data();
-                displayMessage(message);
-            });
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+    // Load messages with real-time updates
+    const subscription = supabase
+        .from('messages')
+        .on('*', payload => {
+            loadMessages();
+        })
+        .subscribe();
+
+    // Initial load
+    loadMessages();
+}
+
+async function loadMessages() {
+    const chatMessages = document.getElementById('chat-messages');
+    if (!chatMessages) return;
+    
+    try {
+        const { data: messages, error } = await supabase
+            .from('messages')
+            .select('*')
+            .order('created_at', { ascending: true });
+        
+        if (error) throw error;
+        
+        chatMessages.innerHTML = '';
+        messages.forEach(message => {
+            displayMessage(message);
         });
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    } catch (error) {
+        console.error("Error loading messages:", error);
+    }
 }
 
 function displayMessage(message) {
@@ -47,12 +75,12 @@ function displayMessage(message) {
     messageElement.innerHTML = `
         <strong>${message.name}</strong>
         <p>${message.message}</p>
-        <small>${message.timestamp?.toDate().toLocaleString()}</small>
+        <small>${new Date(message.created_at).toLocaleString()}</small>
     `;
     chatMessages.appendChild(messageElement);
 }
 
-// Enhanced File Upload Functionality
+// Enhanced File Upload Functionality with Supabase
 function initFileUpload() {
     const fileInput = document.getElementById('file-upload');
     const dropZone = document.getElementById('drop-zone');
@@ -91,43 +119,48 @@ function initFileUpload() {
 
     async function handleFileUpload(file) {
         try {
-            const storageRef = storage.ref(`uploads/${Date.now()}_${file.name}`);
-            const uploadTask = storageRef.put(file);
-            
-            uploadTask.on('state_changed',
-                (snapshot) => {
-                    const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    progressBar.style.width = `${progress}%`;
-                    progressText.textContent = `${Math.round(progress)}%`;
-                },
-                (error) => {
-                    console.error("Upload error:", error);
-                    progressBar.style.width = '0%';
-                    progressText.textContent = '0%';
-                    alert("Upload failed. Please try again.");
-                },
-                async () => {
-                    // Upload complete
-                    const downloadURL = await uploadTask.snapshot.ref.getDownloadURL();
-                    
-                    // Save file metadata to Firestore
-                    await db.collection("files").add({
+            const filePath = `uploads/${Date.now()}_${file.name}`;
+            const { data, error } = await supabase.storage
+                .from('files')
+                .upload(filePath, file, {
+                    cacheControl: '3600',
+                    upsert: false,
+                    onUploadProgress: (progressEvent) => {
+                        const progress = (progressEvent.loaded / progressEvent.total) * 100;
+                        progressBar.style.width = `${progress}%`;
+                        progressText.textContent = `${Math.round(progress)}%`;
+                    }
+                });
+
+            if (error) throw error;
+
+            // Get public URL
+            const { data: { publicUrl } } = supabase.storage
+                .from('files')
+                .getPublicUrl(filePath);
+
+            // Save file metadata to Supabase
+            const { data: fileData, error: dbError } = await supabase
+                .from('files')
+                .insert([
+                    { 
                         name: file.name,
                         size: file.size,
                         type: file.type,
-                        url: downloadURL,
-                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                    });
-                    
-                    // Reset input and progress
-                    fileInput.value = '';
-                    progressBar.style.width = '0%';
-                    progressText.textContent = '0%';
-                    
-                    // Refresh file list
-                    loadFiles();
-                }
-            );
+                        url: publicUrl,
+                        created_at: new Date()
+                    }
+                ]);
+
+            if (dbError) throw dbError;
+
+            // Reset input and progress
+            fileInput.value = '';
+            progressBar.style.width = '0%';
+            progressText.textContent = '0%';
+            
+            // Refresh file list
+            loadFiles();
         } catch (error) {
             console.error("Upload failed:", error);
             progressBar.style.width = '0%';
@@ -136,17 +169,19 @@ function initFileUpload() {
         }
     }
 
-    // Load files from Firestore
+    // Load files from Supabase
     async function loadFiles() {
         try {
-            const snapshot = await db.collection("files")
-                .orderBy("timestamp", "desc")
-                .get();
+            const { data: files, error } = await supabase
+                .from('files')
+                .select('*')
+                .order('created_at', { ascending: false });
+            
+            if (error) throw error;
             
             fileList.innerHTML = '<div class="file-list-header"><span>File Name</span><span>Date</span><span>Size</span><span>Action</span></div>';
             
-            snapshot.forEach(doc => {
-                const file = doc.data();
+            files.forEach(file => {
                 displayFile(file);
             });
         } catch (error) {
@@ -159,7 +194,7 @@ function initFileUpload() {
         fileItem.className = 'file-item';
         fileItem.innerHTML = `
             <span>${file.name}</span>
-            <span class="file-date">${file.timestamp?.toDate().toLocaleDateString()}</span>
+            <span class="file-date">${new Date(file.created_at).toLocaleDateString()}</span>
             <span>${formatFileSize(file.size)}</span>
             <div class="file-actions">
                 <a href="${file.url}" download="${file.name}" class="download-btn">
