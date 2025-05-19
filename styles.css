@@ -442,6 +442,7 @@ body.light-mode {
     padding: 10px 0;
     border-bottom: 1px solid var(--hover-bg);
     align-items: center;
+    animation: fadeIn 0.5s ease forwards;
 }
 
 .download-btn {
