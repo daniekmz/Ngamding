@@ -11,6 +11,7 @@ function init() {
     setupScrollAnimation();
     setupNavigation();
     setInitialTheme();
+    setupMaterialRipple();
 }
 
 // Set up event listeners
@@ -124,6 +125,40 @@ function setupScrollAnimation() {
 
     document.querySelectorAll('.animate-on-scroll').forEach((el) => {
         observer.observe(el);
+    });
+}
+
+// Material Design Ripple Effect
+function setupMaterialRipple() {
+    document.addEventListener('click', function(e) {
+        const target = e.target.closest('.btn, .sidebar-nav a, .theme-toggle, .download-btn, .delete-btn');
+        if (!target) return;
+
+        // Create ripple element
+        const ripple = document.createElement('span');
+        ripple.classList.add('ripple');
+        
+        // Add ripple to the button
+        target.appendChild(ripple);
+        
+        // Get position and size
+        const rect = target.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        const x = e.clientX - rect.left - size / 2;
+        const y = e.clientY - rect.top - size / 2;
+        
+        // Position and animate the ripple
+        ripple.style.width = ripple.style.height = `${size}px`;
+        ripple.style.left = `${x}px`;
+        ripple.style.top = `${y}px`;
+        ripple.style.opacity = '0.2';
+        
+        // Remove ripple after animation
+        setTimeout(() => {
+            ripple.style.opacity = '0';
+            ripple.style.transform = 'scale(2)';
+            setTimeout(() => ripple.remove(), 300);
+        }, 50);
     });
 }
 
